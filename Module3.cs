@@ -1,81 +1,61 @@
 using System;
 
-namespace Module3Discussion
+// Base class modeled directly from Classes.txt:
+// Readonly immutable field
+// Automatic properties
+// Expression-bodied read-only calculated property
+public class Stock
 {
-    // Class definition representing an item or entity
-    public class Product
+    public readonly string Symbol;
+    public decimal CurrentPrice { get; set; }
+    public decimal SharesOwned { get; set; }
+
+    public Stock(string symbol, decimal currentPrice, decimal sharesOwned)
     {
-        // Auto-implemented properties
-        public string Name { get; set; }
-        public double UnitPrice { get; set; }
-        public int Quantity { get; set; }
-
-        // Parameterized Constructor
-        public Product(string name, double unitPrice, int quantity)
-        {
-            Name = name;
-            UnitPrice = unitPrice;
-            Quantity = quantity;
-        }
-
-        // Method calculating total before tax
-        public double CalculateSubtotal()
-        {
-            return UnitPrice * Quantity;
-        }
-
-        // Method calculating sales tax
-        public double CalculateTax(double taxRate)
-        {
-            return CalculateSubtotal() * taxRate;
-        }
-
-        // Method calculating grand total
-        public double CalculateTotal(double taxRate)
-        {
-            return CalculateSubtotal() + CalculateTax(taxRate);
-        }
-
-        // Method to display formatted order details
-        public void DisplaySummary(double taxRate)
-        {
-            Console.WriteLine("\n--- Order Summary ---");
-            Console.WriteLine("Item:             {0}", Name);
-            Console.WriteLine("Unit Price:       {0:C}", UnitPrice);
-            Console.WriteLine("Quantity:         {0}", Quantity);
-            Console.WriteLine("Subtotal:         {0:C}", CalculateSubtotal());
-            Console.WriteLine("Tax ({0:P0}):        {1:C}", taxRate, CalculateTax(taxRate));
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Total Amount:     {0:C}", CalculateTotal(taxRate));
-        }
+        Symbol = symbol;
+        CurrentPrice = currentPrice;
+        SharesOwned = sharesOwned;
     }
 
-    class Program
+    // Expression-bodied calculated property
+    public decimal TotalValue => CurrentPrice * SharesOwned;
+
+    public void DisplaySummary() =>
+        Console.WriteLine($"[{Symbol}] Shares: {SharesOwned}, Price: {CurrentPrice:C}, Total: {TotalValue:C}");
+}
+
+// Derived class demonstrating direct Inheritance and Constructor Chaining:
+// Inherits state and properties directly from Stock
+// Passes core parameters up via base(...)
+// Extends functionality by adding dividend-specific metrics 
+public class DividendStock : Stock
+{
+    public decimal AnnualDividendPerShare { get; set; }
+
+    public DividendStock(string symbol, decimal currentPrice, decimal sharesOwned, decimal annualDividend)
+        : base(symbol, currentPrice, sharesOwned)
     {
-        static void Main(string[] args)
-        {
-            const double StandardTaxRate = 0.07; // 7% standard rate
+        AnnualDividendPerShare = annualDividend;
+    }
 
-            Console.WriteLine("=== Product Entry Console ===");
+    // Calculated property specific to DividendStock
+    public decimal ProjectedAnnualIncome => AnnualDividendPerShare * SharesOwned;
 
-            // Prompting for user input
-            Console.Write("Enter product name: ");
-            string prodName = Console.ReadLine();
+    public void DisplayDividendBreakdown()
+    {
+        DisplaySummary();
+        Console.WriteLine($"  -> Annual Dividend/Share: {AnnualDividendPerShare:C} | Projected Income: {ProjectedAnnualIncome:C}");
+    }
+}
 
-            Console.Write("Enter unit price: ");
-            double prodPrice = double.Parse(Console.ReadLine());
+class Program
+{
+    static void Main()
+    {
+        // Instantiating the derived class directly as a DividendStock instance
+        DividendStock investment = new DividendStock("VCTR", 38.50m, 120m, 1.40m);
 
-            Console.Write("Enter quantity: ");
-            int prodQty = int.Parse(Console.ReadLine());
-
-            // Instantiating an object of the Product class
-            Product myProduct = new Product(prodName, prodPrice, prodQty);
-
-            // Calling class methods to display formatted output
-            myProduct.DisplaySummary(StandardTaxRate);
-
-            Console.WriteLine("\nPress any key to exit...");
-            Console.ReadKey();
-        }
+        Console.WriteLine($"Created instance of: {nameof(DividendStock)}");
+        investment.DisplayDividendBreakdown();
     }
 }
