@@ -1,0 +1,60 @@
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Ask the user for the first number
+        Console.Write("Enter the first number: ");
+        string input1 = Console.ReadLine();
+
+        // Ask the user for the second number
+        Console.Write("Enter the second number: ");
+        string input2 = Console.ReadLine();
+
+        // Call the method that handles conversion and division
+        DivideStrings(input1, input2);
+    }
+
+    // This method takes two strings, tries to convert and divide them
+    static void DivideStrings(string str1, string str2)
+    {
+        try
+        {
+            // Convert the first string to an integer
+            // May throw FormatException or OverflowException
+            int num1 = Convert.ToInt32(str1);
+
+            // Convert the second string to an integer
+            int num2 = Convert.ToInt32(str2);
+
+            // Perform the division
+            // May throw DivideByZeroException
+            int result = num1 / num2;
+
+            // If no exceptions occur, print the result
+            Console.WriteLine($"Result: {result}");
+        }
+        catch (FormatException)
+        {
+            // This happens when the input cannot be converted to a number
+            Console.WriteLine("Error: One or both inputs are not valid integers.");
+        }
+        catch (DivideByZeroException)
+        {
+            // This happens when the denominator is zero
+            Console.WriteLine("Error: Cannot divide by zero.");
+        }
+        catch (OverflowException)
+        {
+            // Happens when the number is too large or too small for an int
+            Console.WriteLine("Error: One of the numbers is too large or too small.");
+        }
+        catch (Exception ex)
+        {
+            // Catch-all for any other unexpected errors
+            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+        }
+    }
+}
+
