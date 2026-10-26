@@ -96,13 +96,42 @@ class Program
     // Option 1: Add the starting keys and values.
     static void PopulateDictionary()
     {
-        Console.WriteLine("Populate feature coming soon.");
+        // Clear existing entries first so choosing this option
+		// twice does not cause "key already exists" errors or duplicates.
+		dictionary.Clear();
+
+		// each key is a category, and its value is a List of strings.
+		// add more values to a key later (Task 1.5).
+		// NOTE: Replace these sample entries with .
+		dictionary["test1"] = new List<string> { "x", "x" };
+		dictionary["test2"] = new List<string> { "x", "x" };
+		dictionary["test3"] = new List<string> { "x", "x" };		
+        dictionary["test4"] = new List<string> { "x", "x" };
+
+		// Confirm to the user how many keys were added.
+		Console.WriteLine("Dictionary populated with " + dictionary.Count + " keys.");
     }
 
     // Option 2: Use enumeration to display dictionary contents.
     static void DisplayDictionary()
     {
-        Console.WriteLine("Display feature coming soon.");
+       // If nothing has been added yet, tell the user instead of
+		// printing an empty list.
+		if (dictionary.Count == 0)
+		{
+			Console.WriteLine("The dictionary is empty. Use option 1 to populate it.");
+			return;
+		}
+
+		Console.WriteLine("\n--- Dictionary Contents ---");
+
+		// Each pass through the loop gives us one key and its list of values.
+		foreach (KeyValuePair<string, List<string>> pair in dictionary)
+		{
+			// string.Join combines the list items into one line,
+			// separated by commas (example: "Apple, Banana").
+			Console.WriteLine(pair.Key + ": " + string.Join(", ", pair.Value));
+		}
     }
 
     // Option 3: Ask the user for a key and remove it.
@@ -114,7 +143,33 @@ class Program
     // Option 4: Ask for a new key and its starting value.
     static void AddEntry()
     {
-        Console.WriteLine("Add feature coming soon.");
+        // Ask the user for the new key. The ?? "" avoids a null value.
+		Console.Write("Enter the new key: ");
+		string key = Console.ReadLine() ?? "";
+
+		// Do not allow a blank key.
+		if (string.IsNullOrWhiteSpace(key))
+		{
+			Console.WriteLine("Key cannot be empty.");
+			return;
+		}
+
+		// Dictionary keys must be unique. If the key already exists,
+		// send the user to option 5 instead of overwriting it.
+		if (dictionary.ContainsKey(key))
+		{
+			Console.WriteLine("That key already exists. Use option 5 to add a value to it.");
+			return;
+		}
+
+		// Ask for the first value for this key.
+		Console.Write("Enter a value for '" + key + "': ");
+		string value = Console.ReadLine() ?? "";
+
+		// Create a new list that holds the starting value, then add the pair.
+		dictionary.Add(key, new List<string> { value });
+
+		Console.WriteLine("Added '" + key + "' with value '" + value + "'.");
     }
 
     // Option 5: Append a value to an existing key's list.
