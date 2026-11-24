@@ -179,6 +179,5 @@ public class Subcontractor : Contractor
         return (float)pay;
     }
 }
-```
 }
 ```
